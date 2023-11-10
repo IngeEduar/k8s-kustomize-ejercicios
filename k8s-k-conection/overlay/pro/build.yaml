@@ -1,0 +1,256 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    env: pro
+  name: pro
+---
+apiVersion: v1
+data:
+  entorno: pro
+kind: ConfigMap
+metadata:
+  labels:
+    env: pro
+  name: pro-cm-backend-6gm6ct5k7c
+  namespace: pro
+---
+apiVersion: v1
+data:
+  servers: |-
+    upstream backend {
+        server pro-backend-service:8080;
+    }
+
+    server {
+        listen 443 ssl;
+        server_name localhost;
+
+        ssl_certificate /etc/nginx/ssl/crt.crt;
+        ssl_certificate_key /etc/nginx/ssl/key.key;
+
+        location / {
+            proxy_pass http://backend;
+        }
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    env: pro
+  name: pro-cm-nginx-servers-t4cc7dfftm
+  namespace: pro
+---
+apiVersion: v1
+data:
+  secret: U295IHVuIHNlY3JldG8gZGUgcHJvZHVjY2nDs24=
+kind: Secret
+metadata:
+  labels:
+    env: pro
+  name: pro-secret-env-2474kdt2gt
+  namespace: pro
+type: Opaque
+---
+apiVersion: v1
+data:
+  tls.crt: |
+    LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVLVENDQXhHZ0F3SUJBZ0lVRzJlTG
+    JFNTBQOGpSa1lINkxxVHV6b0ZMUzZnd0RRWUpLb1pJaHZjTkFRRUwKQlFBd2dhTXhDekFK
+    QmdOVkJBWVRBa05QTVJzd0dRWURWUVFJREJKT2IzSjBaU0JrWlNCellXNTBZVzVrWlhJeA
+    pFakFRQmdOVkJBY01DVVBEZzhLNlkzVjBZVEVXTUJRR0ExVUVDZ3dOUldSMVlYSWdZMjl0
+    Y0dGdWVURU5NQXNHCkExVUVDd3dFUkdWMmN6RVNNQkFHQTFVRUF3d0piRzlqWVd4b2IzTj
+    BNU2d3SmdZSktvWklodmNOQVFrQkZobDQKWVhacFpYSmhkbVZ1WkdGdWJ6bEFaMjFoYVd3
+    dVkyOXRNQjRYRFRJek1URXdPVEUxTURVd00xb1hEVEkwTVRFdwpPREUxTURVd00xb3dnYU
+    14Q3pBSkJnTlZCQVlUQWtOUE1Sc3dHUVlEVlFRSURCSk9iM0owWlNCa1pTQnpZVzUwCllX
+    NWtaWEl4RWpBUUJnTlZCQWNNQ1VQRGc4SzZZM1YwWVRFV01CUUdBMVVFQ2d3TlJXUjFZWE
+    lnWTI5dGNHRnUKZVRFTk1Bc0dBMVVFQ3d3RVJHVjJjekVTTUJBR0ExVUVBd3dKYkc5allX
+    eG9iM04wTVNnd0pnWUpLb1pJaHZjTgpBUWtCRmhsNFlYWnBaWEpoZG1WdVpHRnViemxBWj
+    IxaGFXd3VZMjl0TUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGCkFBT0NBUThBTUlJQkNnS0NB
+    UUVBMktFcitOZjd4aVMrV015VytuTkFlVHFOaFRVeXV4R0ZLdDFRSW50UHRlMkUKTmVuQj
+    FYdXNhRVVVdi9GVDVPWXlHY0lFZWxmRE5TL1FOSTc5MTlGcU50RHpJTEp3UCs1S1pVZ2Rz
+    cUlHWkYvUAphalk4YkErcUtTd0FTeWR0RjRFR0ZTNFFoMmlTWWxtdGtZVWhJUmxvZzl2Mn
+    Ivc1NVdDlqb2xtK3d4cHYvR2pzCm1mLzdoY3ovSGZHVjBLTTE4elB0UytWWGJtTUJ0MDdS
+    SFY5c2dQaDdCWjg4OElEUFRhcU40WlQxL2tqMC9pTU0KdFVGNEdSaHM2bVpLNzB0SWFwMn
+    NSd0JUZGRHSnlzSTBCWVBEMFoxc0F0cjRCTVhidUJjV0tKRmN4TmZpZjhDeQpTd2VoSWVL
+    UjBZNDJxOW9oUkV5d0dRcmpXNmkzaXE5bzZ4V29QS1BsbXdJREFRQUJvMU13VVRBZEJnTl
+    ZIUTRFCkZnUVVNeHhHQmoyYjQxUkpPOERjSXpodDd5a2szY013SHdZRFZSMGpCQmd3Rm9B
+    VU14eEdCajJiNDFSSk84RGMKSXpodDd5a2szY013RHdZRFZSMFRBUUgvQkFVd0F3RUIvek
+    FOQmdrcWhraUc5dzBCQVFzRkFBT0NBUUVBa0krKwpOUjFEMlgxSnA1OFRhQ1I5ZkVqYnpX
+    VFcxZTZVNmp0eHNYcTRwdnN5UDd4SHNBTHAzZzBtQWFySURSZ2I4VEcvCmFlU0Fna3JHaU
+    NMMEtpZTZvdzJGOGpYUERzdWttRkdTb1ZkTXlQWjdrQ2dZZlIvK0dtd3hPNDV0d2VEcmpa
+    NEoKcFpjNW5BM1ZjMXBRK1M4ek5EN2RUeGZIYXlGS1BSMU1iN2NrbWxnREtLZGE1Q2N2MT
+    ZCcDJKcTBTczFaYjkzagovYXBTTWduVFJjTXBNc0hvcGZnZ1FQMlJpME9YNS9ud2crKzdK
+    TWpyWVJxU3RWZUxhK3RpcjBXSjVwN0RXQmp4ClZNL3FSZzlIbERvbEp2RU9DemNnQXBYWW
+    tTQTFmT096clEvZnE4L0FPYnRoT3FhUEpOUWZWajI3OElyQUtzZEgKZmdTaUdzbjU3cWRU
+    TklvWkJnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.key: |
+    LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JSUV2Z0lCQURBTkJna3Foa2lHOXcwQk
+    FRRUZBQVNDQktnd2dnU2tBZ0VBQW9JQkFRRFlvU3Y0MS92R0pMNVkKekpiNmMwQjVPbzJG
+    TlRLN0VZVXEzVkFpZTArMTdZUTE2Y0hWZTZ4b1JSUy84VlBrNWpJWndnUjZWOE0xTDlBMA
+    pqdjNYMFdvMjBQTWdzbkEvN2twbFNCMnlvZ1prWDg5cU5qeHNENm9wTEFCTEoyMFhnUVlW
+    TGhDSGFKSmlXYTJSCmhTRWhHV2lEMi9hdit4SlMzMk9pV2I3REdtLzhhT3laLy91RnpQOG
+    Q4WlhRb3pYek0rMUw1VmR1WXdHM1R0RWQKWDJ5QStIc0Zuenp3Z005TnFvM2hsUFgrU1BU
+    K0l3eTFRWGdaR0d6cVprcnZTMGhxbmF4SEFGTjEwWW5Ld2pRRgpnOFBSbld3QzJ2Z0V4ZH
+    U0RnhZb2tWekUxK0ovd0xKTEI2RWg0cEhSamphcjJpRkVUTEFaQ3VOYnFMZUtyMmpyCkZh
+    ZzhvK1diQWdNQkFBRUNnZ0VBTno0T2tSUS9BOTN0M29ZNXdCOXc0eGxQNnBiUTI0eVJ1WW
+    NiZnRlVVViQUMKcFo3NVM2QVFyTHhsR0xlSmJkZFlFbUo4TXRpN2tvNGhXYTNYUk5pRjdm
+    bWw3b0lpaHVNVS9MUUJ3c0ozdjlRQQorRFJoZnlzVmVROWIrYzVSand0YmlqNG5mK2htWU
+    FjL2NGc1RRallSQllNcjZ0K3JZZy9PZ0NIRHVFdy9INDRICi9ieGJpLzhGZG8vNlZwdGdk
+    TnpYV2R4R2R1ZU9LazlTcnFNejVuc1U1Sm9lcnREcW5XRTltcTBQdStNMlBtQ1YKUTV5aU
+    5UMUdSY21sVU5UVTVITFBKdVdWUE8wWHlOaGdPUHdJNGVEdVFLSmxHcllxajd3U0N2LzJw
+    MjJYbm9KagpyelFOKzNjSCs1RGF4RlNnekhOclZER0lRM2l5NW1HOUhDNVViSmxhSFFLQm
+    dRRGdqVVdqUDYyWFBJYldpcjIxCmc5eFVwSE5Ma014cVNiVEd5YkZCNXlDV01XeVJoU0lr
+    TVBlM1I1Ukc5L3BxVmZpOFNianV1cTcxV3dJa3B4VEcKVlB5OXFydVhNNnlsSnZqR2tSNn
+    JmaDBITmQzS0x5a2dvNnBpSSs3bmduSjlTOVdEL1B3Vlh1djBjQ0RFbkgwMwpjN2EzSDdH
+    TlZydW1ZaWFXOUZ4U0xqWTFKUUtCZ1FEMjk5NEdBdkh4WlQ1WGw3cWNWVENqd2FjR29idT
+    hmZVp1ClF1VEtGSWc2UHdoQitOMzkzTVdLcWh0Y2RGUUo2cHYyaERaR1V3dmY1NC9wUDVR
+    OEc2OEx3OHppNGR2SkM2dVMKYlM4VUhYYUMvN29vNEtFWmo5eVlsU3lKNXVBcTJRbWZSOH
+    F2N1VGN1QrZ0hoMjBTWENpeXZXV2RLN1F0cTl3eQpDOThJSnBhVHZ3S0JnUUMwcURQY2NR
+    REI2Z281VlFubm5SeUlaSDMxejVzRjhDS213K0grT1dyNEt1OUQ3QzVaCm02UFFLcUJhc0
+    dzaFhlVnQ1b29JVnQwbnZINXU2cFZHTTEzYlloN21PTWF2WURsSjE3c3JFWjFkRGJOUVZM
+    enIKNjRESzBFb0dxK1pjYzhSbUdnVGRWSzdVeTlreEZRMlFyV0hVMW9UTVIzbFZGU1lpME
+    pudDdBdmttUUtCZ0g0dwpIQU9hVWFEMENDeWRYRDR3MFE5N0RTcTRUTUo4MmRhUTIzSGRs
+    OVdiQzA4YUorTmtnSkxmWStlVGtMVVlhT1JHCm5hekZGaFlyclQ2U3U5MFNrQmhFelZWSD
+    doTUZvWDdKeHZwU0s1RzN0SmphWGJZLzZZa1UvNUxlb3IrQjhnYXUKbWdQV0NGVkhlTmtQ
+    KzAwY1JiYytTc05KNTJCR3BkWDBkdHNsVEY3bEFvR0JBTWw5dHoxa0h4YTRTWUF0Y0wweA
+    pwUUlzQ2JpYloxbkJHMjExV3RaeG1ZVG56czNDMnlmMnN6K0w2SVR2OXYyWDczcEp6aXQ1
+    VEJoTStnMjZhQ3NGClUvQ1hmY2RWQ3g2Zng0WnozYjVZQ2NxYjV0VWNZRG5NSDZGbWhNeX
+    NsNlBlN3g4Ym0vRll1MlFPTGVCa0EyQisKU3ZGaERjV1pHcXNCd05sWjg1cVpxaTZWCi0t
+    LS0tRU5EIFBSSVZBVEUgS0VZLS0tLS0K
+kind: Secret
+metadata:
+  labels:
+    env: pro
+  name: pro-secret-nginx-ssl-kcc4b9g7km
+  namespace: pro
+type: kubernetes.io/tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: backend-service
+    env: pro
+    owner: Eduar
+  name: pro-backend-service
+  namespace: pro
+spec:
+  ports:
+  - name: http-backend
+    port: 8080
+    protocol: TCP
+  selector:
+    env: pro
+    name: backend-pod
+    owner: Eduar
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: proxy-service
+    env: pro
+    owner: Eduar
+  name: pro-proxy-service
+  namespace: pro
+spec:
+  ports:
+  - name: https-proxy
+    port: 443
+    protocol: TCP
+  selector:
+    env: pro
+    name: proxy-pod
+    owner: Eduar
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend
+    env: pro
+    owner: Eduar
+  name: pro-backend-deployment
+  namespace: pro
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      env: pro
+      name: backend-pod
+      owner: Eduar
+  template:
+    metadata:
+      labels:
+        env: pro
+        name: backend-pod
+        owner: Eduar
+    spec:
+      containers:
+      - command:
+        - sh
+        - -c
+        - echo "Soy el backend en python del entorno $ENTORNO con el secreto $SECRET"
+          > index.html && python -m http.server 8080
+        env:
+        - name: ENTORNO
+          valueFrom:
+            configMapKeyRef:
+              key: entorno
+              name: pro-cm-backend-6gm6ct5k7c
+        - name: SECRET
+          valueFrom:
+            secretKeyRef:
+              key: secret
+              name: pro-secret-env-2474kdt2gt
+        image: python:3-alpine
+        name: backend-container
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: proxy
+    env: pro
+    owner: Eduar
+  name: pro-proxy-deployment
+  namespace: pro
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      env: pro
+      name: proxy-pod
+      owner: Eduar
+  template:
+    metadata:
+      labels:
+        env: pro
+        name: proxy-pod
+        owner: Eduar
+    spec:
+      containers:
+      - image: nginx:alpine
+        name: proxy-container
+        volumeMounts:
+        - mountPath: /etc/nginx/ssl/
+          name: proxy-ssl
+        - mountPath: /etc/nginx/conf.d/
+          name: proxy-servers
+      volumes:
+      - name: proxy-ssl
+        secret:
+          items:
+          - key: tls.crt
+            path: crt.crt
+          - key: tls.key
+            path: key.key
+          secretName: pro-secret-nginx-ssl-kcc4b9g7km
+      - configMap:
+          items:
+          - key: servers
+            path: server.conf
+          name: pro-cm-nginx-servers-t4cc7dfftm
+        name: proxy-servers

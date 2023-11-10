@@ -1,0 +1,48 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namePrefix: dev-
+namespace: dev
+
+commonLabels:
+  env: dev
+
+replicas:
+  - name: backend-deployment
+    count: 1
+  - name: proxy-deployment
+    count: 1
+
+resources:
+- ../../base/
+- namespace.yaml
+
+configMapGenerator:
+- name: cm-backend
+  literals:
+  - entorno=dev
+- name: cm-nginx-servers
+  files:
+  - servers=data/nginx/servers/server.conf
+
+secretGenerator:
+- name: secret-env
+  files:
+  - secret=data/secrets/secret.txt
+
+patches:
+- target:
+    kind: Service
+    name: proxy-service
+  patch: |
+    - op: replace
+      path: /spec/ports/0/port
+      value: 80
+- target:
+    kind: Deployment
+    name: proxy-deployment
+  patch: | 
+    - op: remove
+      path: /spec/template/spec/volumes/0
+    - op: remove
+      path: /spec/template/spec/containers/0/volumeMounts/0

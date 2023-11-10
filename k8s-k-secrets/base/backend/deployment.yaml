@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: backend-pod
+  template:
+    metadata:
+      labels:
+        name: backend-pod
+    spec:
+      containers:
+        - name: backend-container
+          image: python:alpine3.17
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: db-root-password

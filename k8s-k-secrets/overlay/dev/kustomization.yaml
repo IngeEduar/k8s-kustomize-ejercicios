@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dev
+
+resources:
+  - ../../base
+  - namespace.yaml
+
+secretGenerator:
+  - name: db-secret
+    type: Opaque
+    literals:
+      - db-root-password=12345
+
+commonLabels:
+  env: dev

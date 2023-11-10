@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-deployment
+  labels:
+    app: db-deployment
+spec:
+  selector:
+    matchLabels:
+      name: db-pod
+  template:
+    metadata:
+      name: db-pod
+      labels:
+        name: db-pod
+    spec:
+      containers:
+      - name: db-container
+        image: mysql:8.2.0
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: root

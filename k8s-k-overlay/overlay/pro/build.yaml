@@ -1,0 +1,101 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    env: pre
+    owner: Eduar
+  name: pro
+---
+apiVersion: v1
+data:
+  pages: |-
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Prueba</title>
+    </head>
+    <body>
+        <h1>Esta es nuestra página de producción, mira nuestra pre-producción</h1>
+        <a href="http://localhost:9090">Ver pre-producción</a>
+    </body>
+    </html>
+  servers: "upstream server {\n    server pre-nginx-service.pre.svc.cluster.local:8080;
+    \n}\n\nserver {\n    listen 8080;\n    server_name localhost;\n\n    location
+    / {\n        root /usr/share/nginx/html;\n        index index.html index.htm;\n
+    \   }\n}\n\nserver {\n    listen 9090;\n    server_name localhost;\n\n    location
+    / {\n        proxy_pass http://server;\n    }\n}"
+kind: ConfigMap
+metadata:
+  labels:
+    env: pre
+    owner: Eduar
+  name: pro-cm-nginx-6fbdh7fh29
+  namespace: pro
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: proxy-service
+    env: pre
+    owner: Eduar
+  name: pro-nginx-service
+  namespace: pro
+spec:
+  ports:
+  - name: nginx
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: proxy
+    env: pre
+    owner: Eduar
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: proxy
+    env: pre
+    owner: Eduar
+  name: pro-nginx-deployment
+  namespace: pro
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      env: pre
+      name: nginx-pod
+      owner: Eduar
+  template:
+    metadata:
+      labels:
+        env: pre
+        name: nginx-pod
+        owner: Eduar
+    spec:
+      containers:
+      - image: nginx:1.25.3
+        name: nginx-container
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/
+          name: cm-pages
+        - mountPath: /etc/nginx/conf.d/
+          name: cm-servers
+      volumes:
+      - configMap:
+          items:
+          - key: pages
+            path: index.html
+          name: pro-cm-nginx-6fbdh7fh29
+        name: cm-pages
+      - configMap:
+          items:
+          - key: servers
+            path: nginx.conf
+          name: pro-cm-nginx-6fbdh7fh29
+        name: cm-servers

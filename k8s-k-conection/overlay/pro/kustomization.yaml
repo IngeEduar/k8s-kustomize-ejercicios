@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namePrefix: pro-
+namespace: pro
+
+commonLabels:
+  env: pro
+
+replicas:
+  - name: backend-deployment
+    count: 2
+  - name: proxy-deployment
+    count: 3
+
+resources:
+- ../../base/
+- namespace.yaml
+
+configMapGenerator:
+- name: cm-backend
+  literals:
+  - entorno=pro
+- name: cm-nginx-servers
+  files:
+  - servers=data/nginx/servers/server.conf
+
+secretGenerator:
+- name: secret-env
+  files:
+  - secret=data/secrets/secret.txt
+- name: secret-nginx-ssl
+  files:
+  - tls.crt=data/nginx/ssl/crt.crt
+  - tls.key=data/nginx/ssl/key.key
+  type: "kubernetes.io/tls"

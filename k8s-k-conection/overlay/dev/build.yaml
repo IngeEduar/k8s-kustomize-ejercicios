@@ -1,0 +1,169 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    env: dev
+  name: dev
+---
+apiVersion: v1
+data:
+  entorno: dev
+kind: ConfigMap
+metadata:
+  labels:
+    env: dev
+  name: dev-cm-backend-g4mfcc65tk
+  namespace: dev
+---
+apiVersion: v1
+data:
+  servers: |-
+    upstream backend {
+        server dev-backend-service:8080;
+    }
+
+    server {
+        listen 80;
+        server_name localhost;
+
+        location / {
+            proxy_pass http://backend;
+        }
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    env: dev
+  name: dev-cm-nginx-servers-g2284gcd27
+  namespace: dev
+---
+apiVersion: v1
+data:
+  secret: U295IHVuIHNlY3JldG8gZGUgZGV2
+kind: Secret
+metadata:
+  labels:
+    env: dev
+  name: dev-secret-env-dcckb25mbt
+  namespace: dev
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: backend-service
+    env: dev
+    owner: Eduar
+  name: dev-backend-service
+  namespace: dev
+spec:
+  ports:
+  - name: http-backend
+    port: 8080
+    protocol: TCP
+  selector:
+    env: dev
+    name: backend-pod
+    owner: Eduar
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: proxy-service
+    env: dev
+    owner: Eduar
+  name: dev-proxy-service
+  namespace: dev
+spec:
+  ports:
+  - name: https-proxy
+    port: 80
+    protocol: TCP
+  selector:
+    env: dev
+    name: proxy-pod
+    owner: Eduar
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: backend
+    env: dev
+    owner: Eduar
+  name: dev-backend-deployment
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: dev
+      name: backend-pod
+      owner: Eduar
+  template:
+    metadata:
+      labels:
+        env: dev
+        name: backend-pod
+        owner: Eduar
+    spec:
+      containers:
+      - command:
+        - sh
+        - -c
+        - echo "Soy el backend en python del entorno $ENTORNO con el secreto $SECRET"
+          > index.html && python -m http.server 8080
+        env:
+        - name: ENTORNO
+          valueFrom:
+            configMapKeyRef:
+              key: entorno
+              name: dev-cm-backend-g4mfcc65tk
+        - name: SECRET
+          valueFrom:
+            secretKeyRef:
+              key: secret
+              name: dev-secret-env-dcckb25mbt
+        image: python:3-alpine
+        name: backend-container
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: proxy
+    env: dev
+    owner: Eduar
+  name: dev-proxy-deployment
+  namespace: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      env: dev
+      name: proxy-pod
+      owner: Eduar
+  template:
+    metadata:
+      labels:
+        env: dev
+        name: proxy-pod
+        owner: Eduar
+    spec:
+      containers:
+      - image: nginx:alpine
+        name: proxy-container
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d/
+          name: proxy-servers
+      volumes:
+      - configMap:
+          items:
+          - key: servers
+            path: server.conf
+          name: dev-cm-nginx-servers-g2284gcd27
+        name: proxy-servers

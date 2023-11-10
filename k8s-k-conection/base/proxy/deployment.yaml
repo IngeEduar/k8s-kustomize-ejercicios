@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: proxy-deployment
+  labels:
+    app: proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: proxy-pod
+  template:
+    metadata:
+      labels:
+        name: proxy-pod
+    spec:
+      containers:
+        - name: proxy-container
+          image: nginx:alpine
+          volumeMounts:
+            - name: proxy-ssl
+              mountPath: "/etc/nginx/ssl/"
+            - name: proxy-servers
+              mountPath: "/etc/nginx/conf.d/"
+      volumes:
+      - name: proxy-ssl
+        secret:
+            secretName: secret-nginx-ssl
+            items:
+              - key: tls.crt
+                path: crt.crt
+              - key: tls.key
+                path: key.key
+      - name: proxy-servers
+        configMap:
+            name: cm-nginx-servers
+            items:
+              - key: servers
+                path: server.conf

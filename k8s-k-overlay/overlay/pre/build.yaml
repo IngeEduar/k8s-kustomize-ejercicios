@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    env: pre
+    owner: Eduar
+  name: pre
+---
+apiVersion: v1
+data:
+  pages: |-
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Prueba</title>
+    </head>
+    <body>
+        <h1>Esta es una prueba de kustomize en el entorno de pre</h1>
+    </body>
+    </html>
+  servers: |-
+    server {
+        listen 8080;
+        server_name localhost;
+
+        location / {
+            root /usr/share/nginx/html;
+            index index.html index.htm;
+        }
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    env: pre
+    owner: Eduar
+  name: pre-cm-nginx-6fdhk8g64c
+  namespace: pre
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: proxy-service
+    env: pre
+    owner: Eduar
+  name: pre-nginx-service
+  namespace: pre
+spec:
+  ports:
+  - name: pre-http
+    port: 8080
+    protocol: TCP
+  - name: nginx
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: proxy
+    env: pre
+    owner: Eduar
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: proxy
+    env: pre
+    owner: Eduar
+  name: pre-nginx-deployment
+  namespace: pre
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      env: pre
+      name: nginx-pod
+      owner: Eduar
+  template:
+    metadata:
+      labels:
+        env: pre
+        name: nginx-pod
+        owner: Eduar
+    spec:
+      containers:
+      - image: nginx:1.25.3
+        name: nginx-container
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/
+          name: cm-pages
+        - mountPath: /etc/nginx/conf.d/
+          name: cm-servers
+      volumes:
+      - configMap:
+          items:
+          - key: pages
+            path: index.html
+          name: pre-cm-nginx-6fdhk8g64c
+        name: cm-pages
+      - configMap:
+          items:
+          - key: servers
+            path: nginx.conf
+          name: pre-cm-nginx-6fdhk8g64c
+        name: cm-servers

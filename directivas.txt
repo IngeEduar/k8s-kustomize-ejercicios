@@ -1,0 +1,31 @@
+Dentro de patch encontramos la directiva op, este tiene como opciones
+- move
+
+- op: move
+  from: /spec/template/spec/containers/0/env/0
+  path: /spec/template/spec/containers/0/env/1
+
+- copy
+
+- op: copy
+  from: /spec/template/spec/containers/0/env/0
+  path: /spec/template/spec/containers/0/env/1
+
+- add
+
+- op: add
+  path: /spec/template/spec/containers/0/env/-
+  value:
+    name: NEW_VARIABLE
+    value: new_value
+
+- remove
+
+- op: remove
+  path: /spec/template/spec/containers/0/env/0
+
+- replace
+
+- op: replace
+  path: /spec/template/spec/containers/0/image
+  value: new-image:tag
