@@ -19,12 +19,12 @@ patches:
       path: /spec/template/spec/containers/0/env/0/valueFrom
       value:
         configMapKeyRef:
-            name: dev-cm-database
+            name: cm-database
             key: rootPassword
 
 configMapGenerator:
 - name: cm-database
-  options:
-    disableNameSuffixHash: true
+#  options:
+#    disableNameSuffixHash: true
   files:
   - rootPassword=cm/rootPassword.txt

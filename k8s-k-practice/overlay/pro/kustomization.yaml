@@ -19,13 +19,13 @@ patches:
       path: /spec/template/spec/containers/0/env/0/valueFrom
       value:
         secretKeyRef:
-            name: pro-secret-database
+            name: secret-database
             key: rootPassword
 
 secretGenerator:
 - name: secret-database
   type: Opaque
-  options:
-    disableNameSuffixHash: true
+#  options:
+#    disableNameSuffixHash: true
   files:
   - rootPassword=secret/rootPassword.txt
